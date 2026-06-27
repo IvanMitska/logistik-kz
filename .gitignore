@@ -9,5 +9,5 @@ dist-ssr
 .env
 .env.*
 !.env.example
-data/
+bot/data/
 .claude/settings.local.json
