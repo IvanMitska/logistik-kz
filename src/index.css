@@ -1,0 +1,8 @@
+html,
+body {
+  background-color: #15110c;
+}
+
+#root {
+  min-height: 100vh;
+}

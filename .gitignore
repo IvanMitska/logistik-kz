@@ -1,0 +1,13 @@
+node_modules
+dist
+dist-ssr
+*.local
+.DS_Store
+.vite
+
+# secrets / local data
+.env
+.env.*
+!.env.example
+data/
+.claude/settings.local.json
