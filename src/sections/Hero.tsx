@@ -49,10 +49,11 @@ const Wordmark = styled.div`
   pointer-events: none;
   text-shadow: 0 12px 60px rgba(20, 40, 66, 0.18);
 
-  /* mobile: lift the word up under the container so the sky gap closes */
+  /* mobile: sit the word just under the container, sized so the whole word
+     fits on screen instead of bleeding off both edges */
   @media (max-width: 760px) {
-    top: 38%;
-    font-size: clamp(3.4rem, 21vw, 8rem);
+    top: 42%;
+    font-size: clamp(2.4rem, 15.5vw, 8rem);
   }
 `;
 
@@ -85,8 +86,8 @@ const Hanging = styled.img`
 
   /* mobile: bigger and a touch lower so it anchors the top, less dead sky */
   @media (max-width: 760px) {
-    width: min(660px, 72vw);
-    top: clamp(40px, 7vh, 90px);
+    width: min(720px, 90vw);
+    top: clamp(36px, 6vh, 80px);
   }
 `;
 
@@ -100,6 +101,11 @@ const Stack = styled.img`
   height: auto;
   pointer-events: none;
   user-select: none;
+
+  /* mobile: oversize so the yard is a tall, full base instead of a thin sliver */
+  @media (max-width: 760px) {
+    width: min(1200px, 112%);
+  }
 `;
 
 // mirrored copy filling the bottom-right so the yard spans the full width
@@ -114,8 +120,9 @@ const StackRight = styled.img`
   pointer-events: none;
   user-select: none;
 
+  /* mobile: keep it visible so the container yard spans the whole width */
   @media (max-width: 760px) {
-    display: none;
+    width: min(1100px, 100%);
   }
 `;
 
@@ -137,6 +144,11 @@ const Card = styled(motion.div)`
   width: min(440px, 80vw);
   padding: clamp(24px, 2.4vw, 34px);
   border-radius: 24px;
+
+  /* mobile: drop the card a touch lower so it rests on the container yard */
+  @media (max-width: 760px) {
+    bottom: clamp(22px, 4vh, 48px);
+  }
 
   h1 {
     font-family: var(--font-display);

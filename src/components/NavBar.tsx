@@ -59,6 +59,13 @@ const Cluster = styled.div`
   display: flex;
   align-items: center;
   gap: 10px;
+
+  /* mobile: drop the language switch + CTA — both live in the burger menu */
+  @media (max-width: 600px) {
+    & > .hide-sm {
+      display: none;
+    }
+  }
 `;
 
 // Primary CTA — solid ink pill with white text + circular arrow,
@@ -334,7 +341,7 @@ const NavBar = ({ surface }: NavBarProps) => {
       <Strip $theme={theme} $scrolled={scrolled}>
         <Wordmark to="/" aria-label={t.ui.nav.ariaHome}>
           <Logo className="full" $variant="full" $height="clamp(34px, 3vw, 42px)" />
-          <Logo className="mark-only" $variant="mark" $height="40px" />
+          <Logo className="mark-only" $variant="mark" $height="54px" />
         </Wordmark>
 
         <Cluster>

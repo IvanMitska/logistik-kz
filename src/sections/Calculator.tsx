@@ -355,6 +355,7 @@ const Calculator = () => {
         w1: routeOpt.weeks[0],
         w2: routeOpt.weeks[1],
       }),
+      estimate: { weightKg: kg, category: category.id, route: routeOpt.id },
     });
     scrollToEl('#lead', -10);
   };

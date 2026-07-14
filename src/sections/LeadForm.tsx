@@ -10,6 +10,7 @@ import { glassPanel, glassPanelHover } from '../components/ui/glass';
 import { company } from '../data/content';
 import { useI18n } from '../i18n/I18nContext';
 import { getQuote, onQuote } from '../lib/quote';
+import { submitLeadToCrm } from '../lib/crm';
 
 const Section = styled.section`
   background: var(--bone-dim);
@@ -239,7 +240,8 @@ const Success = styled(motion.div)`
 
 const LeadForm = () => {
   const { t } = useI18n();
-  const [sent, setSent] = useState(false);
+  const [sent, setSent] = useState<'crm' | 'mailto' | false>(false);
+  const [sending, setSending] = useState(false);
   const [cargo, setCargo] = useState('');
 
   // Prefill the cargo field from the calculator (now or when it fires later).
@@ -249,21 +251,47 @@ const LeadForm = () => {
     return onQuote((nq) => setCargo(nq.summary));
   }, []);
 
-  const onSubmit = (e: FormEvent<HTMLFormElement>) => {
+  const onSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     const fd = new FormData(e.currentTarget);
+    const name = String(fd.get('name') || '');
+    const phone = String(fd.get('phone') || '');
+    const email = String(fd.get('email') || '');
+    const cargoText = String(fd.get('cargo') || '');
+
+    // Основной путь — заявка падает прямо в CRM.
+    setSending(true);
+    try {
+      const ok = await submitLeadToCrm({
+        name,
+        phone,
+        email: email || undefined,
+        cargo: cargoText || undefined,
+        estimate: getQuote()?.estimate,
+      });
+      if (ok) {
+        setSent('crm');
+        return;
+      }
+    } catch {
+      // CRM недоступна — падаем на mailto ниже.
+    } finally {
+      setSending(false);
+    }
+
+    // Fallback: открываем почтовый клиент, как раньше.
     const body = [
-      `Имя: ${fd.get('name') || ''}`,
-      `Телефон: ${fd.get('phone') || ''}`,
-      `E-mail: ${fd.get('email') || ''}`,
+      `Имя: ${name}`,
+      `Телефон: ${phone}`,
+      `E-mail: ${email}`,
       ``,
-      `${fd.get('cargo') || ''}`,
+      cargoText,
     ].join('\n');
     const mailto = `mailto:${company.email}?subject=${encodeURIComponent(
       'Заявка на доставку — logistics.kaz',
     )}&body=${encodeURIComponent(body)}`;
     window.location.href = mailto;
-    setSent(true);
+    setSent('mailto');
   };
 
   return (
@@ -341,11 +369,20 @@ const LeadForm = () => {
                   <div className="check">
                     <LuCheck />
                   </div>
-                  <h3>Заявка собрана</h3>
+                  <h3>{sent === 'crm' ? 'Заявка отправлена' : 'Заявка собрана'}</h3>
                   <p>
-                    Мы открыли почтовый клиент с&nbsp;готовым письмом&nbsp;— отправьте его, и&nbsp;мы
-                    свяжемся с&nbsp;вами. Если письмо не&nbsp;открылось, напишите на&nbsp;
-                    {company.email} или в&nbsp;WhatsApp {company.phone}.
+                    {sent === 'crm' ? (
+                      <>
+                        Заявка уже у&nbsp;менеджера&nbsp;— свяжемся с&nbsp;вами в&nbsp;ближайшее
+                        время. Если срочно: WhatsApp {company.phone}.
+                      </>
+                    ) : (
+                      <>
+                        Мы открыли почтовый клиент с&nbsp;готовым письмом&nbsp;— отправьте его,
+                        и&nbsp;мы свяжемся с&nbsp;вами. Если письмо не&nbsp;открылось, напишите
+                        на&nbsp;{company.email} или в&nbsp;WhatsApp {company.phone}.
+                      </>
+                    )}
                   </p>
                 </Success>
               ) : (
@@ -372,7 +409,9 @@ const LeadForm = () => {
                       placeholder="Что везём, примерный вес / объём, откуда в Китае"
                     />
                   </Field>
-                  <Submit type="submit">Отправить заявку</Submit>
+                  <Submit type="submit" disabled={sending}>
+                    {sending ? 'Отправляем…' : 'Отправить заявку'}
+                  </Submit>
                   <Note>
                     Нажимая «Отправить», вы&nbsp;соглашаетесь на&nbsp;обработку контактных данных
                     для&nbsp;связи по&nbsp;вашему запросу.

@@ -3,6 +3,12 @@
 
 export interface Quote {
   summary: string;
+  /** Structured calculator data — forwarded to the CRM together with the lead. */
+  estimate?: {
+    weightKg: number;
+    category: string;
+    route: string;
+  };
 }
 
 let current: Quote | null = null;
