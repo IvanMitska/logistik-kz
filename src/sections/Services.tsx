@@ -322,8 +322,8 @@ const Services = () => {
           <Layout>
             <Feature onClick={() => scrollToEl('#calculator', -10)} aria-label={flagship.title}>
               <div className="photo">
-                <img className="sky" src="/sky.png" alt="" loading="lazy" />
-                <img className="cargo" src="/container-2.png" alt={flagship.title} loading="lazy" />
+                <img className="sky" src="/sky.avif" alt="" loading="lazy" />
+                <img className="cargo" src="/container-2.avif" alt={flagship.title} loading="lazy" />
               </div>
               <div className="head">
                 <span className="icon">

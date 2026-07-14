@@ -211,8 +211,8 @@ const Body = styled.div`
 
 // visual-only data (localized text lives in i18n: t.ui.advantages.cards)
 const cards: Record<string, { stat: string; tone: 'dark' | 'light'; bg: string }> = {
-  price: { stat: '$0.5', tone: 'dark', bg: '/adv-price.png' },
-  white: { stat: '100%', tone: 'light', bg: '/adv-white.png' },
+  price: { stat: '$0.5', tone: 'dark', bg: '/adv-price.avif' },
+  white: { stat: '100%', tone: 'light', bg: '/adv-white.avif' },
 };
 
 const Advantages = () => {

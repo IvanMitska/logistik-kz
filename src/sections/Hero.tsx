@@ -12,9 +12,9 @@ import { scrollToEl } from '../lib/lenis';
  * All container art is pre-rendered PNG with alpha — no runtime 3D.
  */
 
-const SKY = '/sky.png';
-const CONTAINER = '/container-2.png';
-const STACK = '/stack.png';
+const SKY = '/sky.avif';
+const CONTAINER = '/container-2.avif';
+const STACK = '/stack.avif';
 
 const Shell = styled.section`
   position: relative;
