@@ -27,10 +27,19 @@
 
     <link rel="preconnect" href="https://fonts.googleapis.com" crossorigin />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <!-- Non-blocking: fonts swap in when ready, first paint doesn't wait for Google CSS -->
     <link
       href="https://fonts.googleapis.com/css2?family=Schibsted+Grotesk:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500&display=swap"
       rel="stylesheet"
+      media="print"
+      onload="this.media='all'"
     />
+    <noscript>
+      <link
+        href="https://fonts.googleapis.com/css2?family=Schibsted+Grotesk:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500&display=swap"
+        rel="stylesheet"
+      />
+    </noscript>
     <!-- Hero images: sky is a CSS background (discovered late by the browser), so preload it
          together with the two container layers to paint the hero as early as possible. -->
     <link rel="preload" as="image" type="image/avif" href="/sky.avif" />
@@ -66,7 +75,48 @@
     </style>
   </head>
   <body>
-    <div id="root"></div>
+    <!-- Static first frame of the preloader: identical layout/colors to the React
+         Preloader, painted before any JS arrives so FCP fires immediately. React's
+         createRoot().render() replaces it with the live preloader at the same 0%
+         state — the mark placeholder is opacity:0 to match its animation start. -->
+    <style>
+      #root:empty::before { content: ''; position: fixed; inset: 0; background: #070a0d; }
+      .boot {
+        position: fixed; inset: 0; z-index: 9000; background: #070a0d; color: #fff;
+        display: flex; flex-direction: column; align-items: center; justify-content: center;
+        gap: clamp(22px, 4vh, 40px); padding: clamp(28px, 6vw, 72px); overflow: hidden;
+      }
+      .boot svg { width: clamp(180px, 28vw, 340px); height: auto; overflow: visible; opacity: 0; }
+      .boot-meta { display: flex; flex-direction: column; align-items: center; gap: clamp(14px, 2.4vh, 22px); width: min(280px, 60vw); }
+      .boot-counter {
+        font-family: 'JetBrains Mono', ui-monospace, monospace; font-size: 0.95rem;
+        letter-spacing: 0.18em; color: rgba(255, 255, 255, 0.6); font-variant-numeric: tabular-nums;
+      }
+      .boot-bar { height: 2px; width: 100%; background: rgba(255, 255, 255, 0.12); border-radius: 999px; }
+      .boot-sub {
+        font-family: 'Schibsted Grotesk', system-ui, sans-serif; font-size: 0.66rem; font-weight: 600;
+        letter-spacing: 0.22em; text-transform: uppercase; color: #8893a0; min-height: 1em;
+      }
+    </style>
+    <div id="root">
+      <div class="boot">
+        <svg viewBox="0 0 740 740" aria-hidden="true"><rect x="409.465" y="358.635" width="234.383" height="19.7672" fill="#FF8000"/></svg>
+        <div class="boot-meta">
+          <div class="boot-counter">000%</div>
+          <div class="boot-bar"></div>
+          <div class="boot-sub" id="boot-sub"></div>
+        </div>
+      </div>
+    </div>
+    <script>
+      (function () {
+        var subs = { ru: 'Китай → Казахстан · Россия', kk: 'Қытай → Қазақстан · Ресей', en: 'China → Kazakhstan · Russia' };
+        var l;
+        try { l = localStorage.getItem('lk-lang'); } catch (e) {}
+        if (!subs[l]) l = (navigator.language || 'ru').slice(0, 2).toLowerCase();
+        document.getElementById('boot-sub').textContent = subs[l] || subs.ru;
+      })();
+    </script>
     <script type="module" src="/src/main.tsx"></script>
   </body>
 </html>
